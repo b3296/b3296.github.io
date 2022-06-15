@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://blog.twocolorball.cn/img/hexo.png">
 <meta property="og:image" content="https://blog.twocolorball.cn/img/hexo-s.png">
 <meta property="article:published_time" content="2021-05-31T08:35:54.000Z">
-<meta property="article:modified_time" content="2022-05-31T09:29:41.179Z">
+<meta property="article:modified_time" content="2022-05-31T09:30:46.037Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary">
@@ -117,7 +117,8 @@
 <p>生成静态网页<br>命令：hexo g</p>
 <p>预览<br>命令：hexo s<br><img src="https://blog.twocolorball.cn/img/hexo-s.png" alt="预览图片"></p>
 <p>到这里本地就完成了<br>当然要同步到github或者其他服务器上的话要先<br>编辑_config.yml，_config.yml在博客存放目录下(本例的 ~&#x2F;www&#x2F;blog)</p>
-<p>deploy:<br>  type: git<br>  repository: git@<a href="mailto:&#x67;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#x2e;&#99;&#111;&#109;">&#x67;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#x2e;&#99;&#111;&#109;</a>:b3296&#x2F;b3296.github.io.git  #repository仓库地址<br>  branch: main  #分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: git@git@github.com:b3296/b3296.github.io.git  #repository仓库地址</span><br><span class="line">  branch: main  #分支**</span><br></pre></td></tr></table></figure>
+
 <p>发布到github<br>命令：hexo d</p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>一些配置github这里没有说明，主要是记录hexo从0到1搭建了自己的个人博客；<br>直接Markdown编辑还是很爽的，后面再研究一下hexo的主题，插件等。</p>
 
@@ -136,11 +137,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2022/05/25/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/06/15/distinct-order-by/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Hello World
+          DISTINCT 不能与 ORDER BY 一起使用
         
       </div>
     </a>
@@ -163,7 +164,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/" rel="tag">awk</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/" rel="tag">awk</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li></ul>
     </div>
   </div>
 
@@ -173,7 +174,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a>
+      <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/mysql/" style="font-size: 10px;">mysql</a>
     </div>
   </div>
 
@@ -182,7 +183,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li></ul>
     </div>
   </div>
 
@@ -200,6 +201,10 @@
         
           <li>
             <a href="/2022/05/25/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/distinct-order-by/">DISTINCT 不能与 ORDER BY 一起使用</a>
           </li>
         
           <li>
