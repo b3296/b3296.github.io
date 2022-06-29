@@ -126,10 +126,10 @@
   <ul class="clearfix">
     <li class="">
       <a href="/">Overview</a></li>
-    <li class="selected">
+    <li class="">
       <a href="/">Posts <span class="counter">3</span></a>
     </li>
-    <li class="">
+    <li class="selected">
       <a href="/">Categories <span
                 class="counter">1</span></a></li>
     <li class="">
@@ -139,6 +139,28 @@
 
     <div class="body-secondary">
       <ul class="archive-list">
+        
+        <li class="archive-list-item">
+          <h2><a href="/2022/05/27/awk-records/">一个bug引起的一系列操作</a></h2>
+          <p>
+               起因  前两天上线新功能，写了个bug；bug倒是很简单就找到并且排除了，但是由于bug引起的数据问题却让我弄了大半天。 
+   分析  先说一下具体的问题吧，线上有一个功能就是用户每周参与大于5小时可以领取对应的奖励，但是我这个bug导致用户无法领取，恰巧新版本又是在周五上线(测试验收都没发...
+          </p>
+          <ul class="tag-list clearfix">
+            
+            <li class="tag-list-item"><a href="/public/awk/">awk</a></li>
+            
+          </ul>
+          <div class="post-info">
+            <span>
+              
+              <a class="category-link" href="/categories/other/"><i class="fa fa-folder-open"></i> other</a>
+              
+            </span>
+            <span><i class="fa fa-tag"></i> 1 </span>
+            <span>Published {{moment(1653618006000).fromNow()}}</span>
+          </div>
+        </li>
         
         <li class="archive-list-item">
           <h2><a href="/2021/06/15/distinct-order-by/">DISTINCT 不能与 ORDER BY 一起使用</a></h2>
@@ -159,6 +181,28 @@
             </span>
             <span><i class="fa fa-tag"></i> 1 </span>
             <span>Published {{moment(1623747063000).fromNow()}}</span>
+          </div>
+        </li>
+        
+        <li class="archive-list-item">
+          <h2><a href="/2021/05/31/hexo-records/">hexo 搭建个人blog</a></h2>
+          <p>
+               前言  以前一直都没有记录学习和工作心得的习惯，朋友和同事都劝我；一定要搞起来，自己也深知养成这个好习惯受益无穷。 所以准备开始了。然后就发现了hexo，那就用hexo的学习心得记录我用hexo搭建的第一篇博客吧。 
+   环境安装    nodejs       1       $ curl...
+          </p>
+          <ul class="tag-list clearfix">
+            
+            <li class="tag-list-item"><a href="/public/hexo/">hexo</a></li>
+            
+          </ul>
+          <div class="post-info">
+            <span>
+              
+              <a class="category-link" href="/categories/other/"><i class="fa fa-folder-open"></i> other</a>
+              
+            </span>
+            <span><i class="fa fa-tag"></i> 1 </span>
+            <span>Published {{moment(1622450154000).fromNow()}}</span>
           </div>
         </li>
         
