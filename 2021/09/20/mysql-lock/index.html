@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    mysql事务与锁 | Hexo
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  
+  ">
+  
+  <meta name="author" content="Bxl">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="theme-color" content="#1e2327">
+  <link rel="apple-touch-icon" href="https://github.githubassets.com/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://github.githubassets.com/apple-touch-icon-180x180.png">
+
+  <link rel="icon" type="image/x-icon" href="https://github.githubassets.com/favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://octodex.github.com/images/baracktocat.jpg"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 6 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 4 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 3 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Hexo</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Bxl
+
+    <span class="post-date float-right" title="{{moment(1632124458000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      
+          <i class="fa fa-pencil-square-o"></i>
+      
+      {{moment(1632124458000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>mysql事务与锁</h1>
+    <h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="四大特性"><a href="#四大特性" class="headerlink" title="四大特性"></a>四大特性</h3><ul>
+<li>原子性： 事务是小的执行单位，不允许分割。事务的原子性确保动作要么全部完成，要么完全不起作用；</li>
+<li>一致性： 执行事务前后，数据保持一致，多个事务对同一个数据读取的结果是相同的；如果没有原子性的保证，在发生数据库系统故障的情况下，数据库就有可能处于不一致状态（数据提交一半，系统故障，另一半未提交）；</li>
+<li>隔离性： 并发访问数据库时，一个用户的事务不被其他事务所干扰，各并发事务之间数据库是独立的；</li>
+<li>持久性: 一个事务被提交之后。它对数据库中数据的改变是持久的，不能回滚。即使数据库发生故障也不应该对其有任何影响。</li>
+</ul>
+<h3 id="事务读写中存在的问题"><a href="#事务读写中存在的问题" class="headerlink" title="事务读写中存在的问题"></a>事务读写中存在的问题</h3><h4 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h4><p>一个事务读取了某行数据，而另外一个事务已经更新了此行的数据，但没有及时提交。例如，事务A读取了事务B更新的数据，随后事务B因为某些原因进行了回滚操作，那么事务A读取到的数据就是脏数据。这种情况是非常危险的，很可能造成所有的操作都被回滚。</p>
+<h4 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h4><p>指一个事务的修改和提交造成另一个事务在同一范围内的两次相同查询的返回结果不同。例如，事务A需要多次读取同一个数据，在事务A还没有结束时，事务B访问并修改了该数据，那么，事务A两次读取到的数据就可能不一致，因此称为不可重复读。</p>
+<h4 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h4><p>是指一个线程中的事务读取到了另外一个线程中提交的INSERT数据。例如:用户A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是用户B此时插入了一条具体分数的记录，用户A修改完成后发现还有一条记录没有改过来，就好像发生了幻觉一样，因此称这种情况为幻读或者虚读。</p>
+<h3 id="事务的隔离级别"><a href="#事务的隔离级别" class="headerlink" title="事务的隔离级别"></a>事务的隔离级别</h3><h4 id="Read-uncommitted（读未提交）"><a href="#Read-uncommitted（读未提交）" class="headerlink" title="Read uncommitted（读未提交）"></a>Read uncommitted（读未提交）</h4><p>允许脏读取，但不允许更新丢失。如果一个事务已经开始写数据，则另外一个事务则不允许同时进行写操作，但允许其他事务读此行数据。该隔离级别可以通过“排他写锁”实现。</p>
+<h4 id="Read-committed（读已提交）"><a href="#Read-committed（读已提交）" class="headerlink" title="Read committed（读已提交）"></a>Read committed（读已提交）</h4><p>允许不可重复读取，但不允许脏读取。这可以通过“瞬间共享读锁”和“排他写锁”实现。读取数据的事务允许其他事务继续访问该行数据，但是未提交的写事务将会禁止其他事务访问该行。</p>
+<h4 id="Repeatable-read（重复读）"><a href="#Repeatable-read（重复读）" class="headerlink" title="Repeatable read（重复读）"></a>Repeatable read（重复读）</h4><p>禁止不可重复读取和脏读取，但是有时可能出现幻读数据。这可以通过“共享读锁”和“排他写锁”实现。读取数据的事务将会禁止写事务（但允许读事务），写事务则禁止任何其他事务。</p>
+<h4 id="Serializable-串行化"><a href="#Serializable-串行化" class="headerlink" title="Serializable(串行化)"></a>Serializable(串行化)</h4><p>提供严格的事务隔离。它要求事务序列化执行，事务只能一个接着一个地执行，不能并发执行。仅仅通过“行级锁”是无法实现事务序列化的，必须通过其他机制保证新插入的数据不会被刚执行查询操作的事务访问到。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">隔离级别越高，越能保证数据的完整性和一致性，但是对并发性能的影响也越大。</span><br><span class="line">对于多数应用程序，可以优先考虑把数据库系统的隔离级别设为Read Committed。</span><br><span class="line">它能够避免脏读取，而且具有较好的并发性能。</span><br><span class="line">尽管它会导致不可重复读、幻读和第二类丢失更新这些并发问题，在可能出现这类问题的个别场合，可以由应用程序采用悲观锁或乐观锁来控制。</span><br><span class="line">另外MySQL的存储引擎通过多版本并发控制(MultiVersion Concurrency Control，MVCC)机制解决了数据幻读的问题。</span><br><span class="line">因此，当MySQL的隔离级别为Repeatable Read(可重复读)时，是可以避免幻读问题的出现的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="事务隔离级别和锁的关系"><a href="#事务隔离级别和锁的关系" class="headerlink" title="事务隔离级别和锁的关系"></a>事务隔离级别和锁的关系</h3><ul>
+<li>事务隔离级别本质上是对锁和MVCC使用的封装，隐藏了底层细节。</li>
+<li>锁是数据库实现并发控制的基础，事务隔离性是采用锁来实现，对相应操作加不同的锁，就可以防止其他事务同时对数据进行读写操作。</li>
+<li>对用户来讲，首先选择使用隔离级别，当选用的隔离级别不能解决并发问题或需求时，才有必要在开发中手动的设置锁</li>
+</ul>
+<h2 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a>锁机制</h2><h3 id="锁的本质"><a href="#锁的本质" class="headerlink" title="锁的本质"></a>锁的本质</h3><p>数据库的锁机制主要是为了使用户对数据的访问变得有序，保证数据的一致性。锁机制是实现宏观上高并发最简单的方式，但从微观的角度来说，锁机制其实是读写串行化。</p>
+<h3 id="锁分类"><a href="#锁分类" class="headerlink" title="锁分类"></a>锁分类</h3><h4 id="按操作粒度分类"><a href="#按操作粒度分类" class="headerlink" title="按操作粒度分类"></a>按操作粒度分类</h4><ul>
+<li>表级锁：每次操作锁住整张表。锁定粒度大，发生锁冲突的概率最高，并发度最低。应用在MyISAM、InnoDB、BDB 等存储引擎中。</li>
+<li>行级锁：每次操作锁住一行数据。锁定粒度最小，发生锁冲突的概率最低，并发度最高。应用在InnoDB 存储引擎中。</li>
+<li>页级锁：每次锁定相邻的一组记录，锁定粒度界于表锁和行锁之间，开销和加锁时间界于表锁和行锁之间，并发度一般。应用在BDB 存储引擎中。</li>
+</ul>
+<h4 id="按操作类型分类"><a href="#按操作类型分类" class="headerlink" title="按操作类型分类"></a>按操作类型分类</h4><ul>
+<li>读锁（S锁）：共享锁，针对同一份数据，多个读操作可以同时进行而不会互相影响。</li>
+<li>写锁（X锁）：排他锁，当前写操作没有完成前，它会阻断其他写锁和读锁。</li>
+</ul>
+<h4 id="按操作性能分类"><a href="#按操作性能分类" class="headerlink" title="按操作性能分类"></a>按操作性能分类</h4><ul>
+<li>乐观锁：一般的实现方式是对记录数据版本进行比对，在数据更新提交的时候才会进行冲突检测，如果发现冲突了，则提示错误信息。</li>
+<li>悲观锁：在对一条数据修改的时候，为了避免同时被其他人修改，在修改数据之前先锁定，再修改的控制方式。共享锁和排他锁是悲观锁的不同实现，但都属于悲观锁范畴。</li>
+</ul>
+<h3 id="行锁原理-InnoDb"><a href="#行锁原理-InnoDb" class="headerlink" title="行锁原理(InnoDb)"></a>行锁原理(InnoDb)</h3><p>InnoDB行锁是通过对索引数据页上的记录加锁实现的，主要实现算法有 3 种：Record Lock、Gap Lock 和 Next-key Lock。</p>
+<ul>
+<li><p>RecordLock锁：锁定单个行记录的锁。（记录锁，RC、RR隔离级别都支持）；</p>
+</li>
+<li><p>GapLock锁：间隙锁，锁定索引记录间隙，确保索引记录的间隙不变。（范围锁，RR隔离级别支持）；<br>锁的是索引叶子节点的next指针，或者说间隙锁是一个在索引记录之间的间隙上的锁；<br>解决了mysql重复读级别下的幻读问题；</p>
+</li>
+<li><p>Next-key Lock 锁：记录锁和间隙锁组合，同时锁住数据，并且锁住数据前后范围。（记录锁+范围锁，RR隔离级别支持）。</p>
+</li>
+</ul>
+<p>在RR隔离级别，InnoDB对于记录加锁行为都是先采用Next-Key Lock，但是当SQL操作含有唯一索引时，Innodb会对Next-Key Lock进行优化，降级为RecordLock，仅锁住索引本身而非范围。</p>
+<p>（RR隔离级别，优先加记录锁和间隙锁，当SQL有唯一索引时，才降级为记录锁）。</p>
+<h3 id="锁等待"><a href="#锁等待" class="headerlink" title="锁等待"></a>锁等待</h3><p>是指在一个事务执行过程中，一个锁需要等到上一个事务的锁释放后才可以使用该资源。如果事务一直不释放，就需要持续等待下去，直到超过锁等待时间，此时系统会报出超时错误。MySQL中锁等待时间是通过innodb_lock_wait_timout参数控制的，该参数的单位为秒。</p>
+<h3 id="死锁产生的原因"><a href="#死锁产生的原因" class="headerlink" title="死锁产生的原因"></a>死锁产生的原因</h3><p>两个或两个以上的事务都分别申请封锁对方已经封锁的数据对象，导致长期等待而无法继续运行下去的现象被称为死锁。死锁是指事务永远不会释放它们所占用的锁，死锁中的两个或两个以上的事务都将无限期地等待下去。</p>
+<h3 id="对死锁的处理"><a href="#对死锁的处理" class="headerlink" title="对死锁的处理"></a>对死锁的处理</h3><p>锁的行为和顺序是和存储引擎相关的。思索的产生有些是因为真正的数据冲突，有些则是因为存储引擎实现的方式导致的。在MySQL的InnoDB存储引擎中，当检测到死锁时，通常会使一个持有最少行级排它锁的事务释放锁并回滚，而让另一个事务获得锁并继续完成事务。</p>
+<h3 id="避免死锁的方法"><a href="#避免死锁的方法" class="headerlink" title="避免死锁的方法"></a>避免死锁的方法</h3><ul>
+<li><p>不同程序会并发存取多个表或者涉及多行记录时，尽量约定以相同的顺序访问表，可以大大降低死锁的机会。</p>
+</li>
+<li><p>对应用程序进行调整，在某些情况下，通过把大事务分解成多个小事务，使得锁能够更快被释放，及时提交或者回滚事务，可减少死锁发生的概率。</p>
+</li>
+<li><p>在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生的概率。</p>
+</li>
+<li><p>为表添加合理的索引，不用索引将会为表的每一行记录加上锁，死锁的概率大大增大。</p>
+</li>
+<li><p>对非常容易产生死锁的业务，可尝试升级锁粒度，通过表锁定来减少死锁产生的概率。</p>
+</li>
+</ul>
+
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://b3296.github.io" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Bxl</li>
+      <li><a href="https://b3296.github.io">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a target="_blank" rel="noopener" href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a target="_blank" rel="noopener" href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

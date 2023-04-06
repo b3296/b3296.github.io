@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    一个bug引起的一系列操作 | Hexo
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  awk
+  ">
+  
+  <meta name="author" content="Bxl">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="theme-color" content="#1e2327">
+  <link rel="apple-touch-icon" href="https://github.githubassets.com/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://github.githubassets.com/apple-touch-icon-180x180.png">
+
+  <link rel="icon" type="image/x-icon" href="https://github.githubassets.com/favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://octodex.github.com/images/baracktocat.jpg"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 6 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 4 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 3 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Hexo</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Bxl
+
+    <span class="post-date float-right" title="{{moment(1653618006000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      
+          <i class="fa fa-pencil-square-o"></i>
+      
+      {{moment(1653618006000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>一个bug引起的一系列操作</h1>
+    <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>前两天上线新功能，写了个bug；bug倒是很简单就找到并且排除了，但是由于bug引起的数据问题却让我弄了大半天。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>先说一下具体的问题吧，线上有一个功能就是用户每周参与大于5小时可以领取对应的奖励，但是我这个bug导致用户无法领取，恰巧新版本又是在周五上线(测试验收都没发现)，问题是周一运营反馈过来的。<br>所以就需要把这些达到领取奖励但是还没领取的用户查出来给补偿；数据库只有领取记录，用户参与时间记录是客户端上报，记录日志；</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>到这里解决办法已经出来了：就是在日志里查出所有满足的用户，去除掉已领取的用户；但是我们线上有6台服务器，6个语言<br>日志数据张这样：<br><img src="https://blog.twocolorball.cn/log.png" alt="日志数据"></p>
+<h3 id="step1"><a href="#step1" class="headerlink" title="step1"></a>step1</h3><p>awk命令：cat readingDuration&#x2F;2022&#x2F;05&#x2F;18.log readingDuration&#x2F;2022&#x2F;05&#x2F;19.log readingDuration&#x2F;2022&#x2F;05&#x2F;20.log readingDuration&#x2F;2022&#x2F;05&#x2F;21.log readingDuration&#x2F;2022&#x2F;05&#x2F;22.log readingDuration&#x2F;2022&#x2F;05&#x2F;23.log | awk ‘{split($4,data,”{“); split(data[2],item,”,”);split(item[1],m,”:”);split(item[3],c,”:”);if(c[2]&gt;18000)print m[2]}’ &gt; &#x2F;tmp&#x2F;en_3.log</p>
+<h3 id="step2"><a href="#step2" class="headerlink" title="step2"></a>step2</h3><p>然后就是每台服务器每个语言执行 再经历两个scp之后下载到本地(之间有把同语言各个服务器合到同一个文件,两个scp是因为，线上服务器不能直接链接，只能通过发布机中转)<br>下载到本地之后发现，最大的语种文件高达100多M，有100多万条；才想起来awk命令里忘记去重了，只能手动excel去重，然后也还是有10万左右数据；本来想mysql查一下领取的然后做一下去重，但是感觉太麻烦(其实是excel两个文件去重不太会)；</p>
+<h3 id="step3"><a href="#step3" class="headerlink" title="step3"></a>step3</h3><p>好吧，又写脚本，查完之后直接array_diff,然后就是各个语言执行，scp到本地，终于结束了，前后差不多弄了3个多小时；</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>哎，总结一下：bug就不提了，在所难免的，以后细心再细心吧；解决问题时有些太着急了，首先就是awk没有去重，其次完全可以写个shell脚本的，没有必要这个多服务器和语言来回切换，就是增加一下测试成本，保证脚本正确执行就行；<br>还有就是最终结果去重，想excel执行但又没执行；其实也完全可以不用费事把log结果下载到本地的，后来执行的脚本就可以直接读取excel数据的，这样省去了很多没必要的scp切换和导数据；<br>ok,写到这里吧，希望以后回来看时，再反思总结一下，争取以后不要再犯相同的问题！</p>
+
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://b3296.github.io" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Bxl</li>
+      <li><a href="https://b3296.github.io">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a target="_blank" rel="noopener" href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a target="_blank" rel="noopener" href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>
