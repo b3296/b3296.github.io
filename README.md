@@ -14,7 +14,7 @@
 
 ## 项目导航
 
-- [直播系统后端项目]((https://github.com/b3296/go-live-backend))
+- [直播系统后端项目](https://github.com/b3296/go-live-backend)
 - [更多项目持续更新中...](https://github.com/b3296?tab=repositories)
 
 ## 联系我
